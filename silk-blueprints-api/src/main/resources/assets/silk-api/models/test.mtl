@@ -1,0 +1,23 @@
+newmtl FrontMaterial
+Kd 1.0 0.0 0.0
+wobbleFactor 0.0
+
+newmtl BackMaterial
+Kd 0.0 0.0 1.0
+wobbleFactor 0.0
+
+newmtl TopMaterial
+Kd 0.0 1.0 0.0
+wobbleFactor 0.0
+
+newmtl BottomMaterial
+Kd 1.0 1.0 0.0
+wobbleFactor 0.0
+
+newmtl LeftMaterial
+Kd 1.0 0.5 0.0
+wobbleFactor 0.0
+
+newmtl RightMaterial
+Kd 0.5 0.0 1.0
+wobbleFactor 0.0

@@ -1,7 +1,8 @@
 .gradle
 build/
 run/
-!gradle/wrapper/gradle-wrapper.jar
+hs_err_pid*.log
+!buildSrc/src/main/kotlin/de/rhm176/gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
 

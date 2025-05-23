@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "de.rhm176.api.base.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "BinaryReaderMixin",
+    "FileUtilsMixin",
+    "GameManagerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

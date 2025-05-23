@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "de.rhm176.api.lang.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "EngineMasterMixin",
+    "UserConfigsMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
