@@ -36,9 +36,7 @@ public final class I18n {
      * If the key is not found, the key itself is used as the format string with the arguments.
      *
      * @param key  The translation key.
-     * @param args The arguments to be inserted into the formatted string. The array itself
-     * must not be null ({@link NotNull}), though its elements can be null if
-     * permissible by the format string. Pass an empty array for no arguments.
+     * @param args The arguments to be inserted into the formatted string.
      * @return The translated and formatted string, or the key formatted with arguments if no
      * translation is found.
      * @throws java.util.IllegalFormatException if the format string is invalid, or an argument is of the
@@ -47,7 +45,7 @@ public final class I18n {
      */
     @NotNull
     @Contract(pure = true)
-    public static String translate(@NonNls @NotNull String key, @NotNull Object[] args) {
+    public static String translate(@NonNls @NotNull String key, Object... args) {
         return String.format(LanguageInit.loadedLanguage.getOrDefault(key, key), args);
     }
 
@@ -73,9 +71,7 @@ public final class I18n {
      *
      * @param key The translation key.
      * @param fallback The string to use as the format template if the key is not found.
-     * @param args The arguments to be inserted into the formatted string. The array itself
-     * must not be null ({@link NotNull}), though its elements can be null if
-     * permissible by the format string. Pass an empty array for no arguments.
+     * @param args The arguments to be inserted into the formatted string.
      * @return The translated and formatted string, or the fallback string formatted with arguments
      * if no translation is found.
      * @throws java.util.IllegalFormatException if the format string is invalid, or an argument is of the
@@ -84,7 +80,7 @@ public final class I18n {
      */
     @NotNull
     @Contract(pure = true)
-    public static String translateWithFallback(@NonNls @NotNull String key, @NotNull String fallback, @NotNull Object[] args) {
+    public static String translateWithFallback(@NonNls @NotNull String key, @NotNull String fallback, Object... args) {
         return String.format(LanguageInit.loadedLanguage.getOrDefault(key, fallback), args);
     }
 }

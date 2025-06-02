@@ -22,7 +22,6 @@ public class Registry<T> {
         this.currentId = startingId;
         this.startingId = startingId;
 
-        // apparently the root registry cannot be null??
         //noinspection ConstantValue
         if (Registries.ROOT != null && Registries.ROOT != this) {
             Registries.ROOT.register(id, this);
@@ -33,19 +32,19 @@ public class Registry<T> {
         if (frozen) {
             throw new IllegalStateException("Registry is frozen. Cannot register new item: " + id);
         }
-        if (id == null) {
-            throw new IllegalArgumentException("Identifier cannot be null.");
-        }
-        if (value == null) {
-            throw new IllegalArgumentException("Value cannot be null for Identifier: " + id);
-        }
+
+        Objects.requireNonNull(id, "Identifier cannot be null.");
+        Objects.requireNonNull(value, "Value cannot be null.");
+
         if (map.containsKey(id)) {
             throw new IllegalArgumentException("Identifier '" + id + "' is already registered.");
         }
+
         map.put(id, value);
         reverseMap.put(value, id);
         intIdToValueList.add(value);
         valueToIntIdMap.put(value, currentId++);
+
         return value;
     }
 

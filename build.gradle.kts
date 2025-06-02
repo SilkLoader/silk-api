@@ -1,19 +1,18 @@
 plugins {
-    id("de.rhm176.silk") version "1.3.3"
+    id("de.rhm176.silk.silk-plugin") version "2.0.0"
     id("maven-publish")
 }
 
-version = project.property("mod_version")!!
+version = project.property("mod_version")!!.toString()
+
+val rootName = "Silk API"
+val rootDescription = "Core API module providing key hooks and intercompatibility features."
+val sourcesUrl = "https://github.com/SilkLoader/silk-api"
 
 val submods = mapOf(
     "silk-api-base" to mapOf(
         "name" to "Silk API Base",
         "description" to "Contains the essentials for other Silk API modules.",
-        "version" to "1.0.0"
-    ),
-    "silk-events-api" to mapOf(
-        "name" to "Silk Events API",
-        "description" to "Contains events for commonly used hooks",
         "version" to "1.0.0"
     ),
     "silk-blueprints-api" to mapOf(
@@ -35,7 +34,6 @@ val submods = mapOf(
         "entrypoint" to "de.rhm176.api.task.TasksMain"
     )
 )
-val sourcesUrl = "https://github.com/SilkLoader/silk-api"
 
 silk {
     mods {
@@ -48,8 +46,8 @@ silk {
     fabric {
         id = "silk-api"
         version = project.property("mod_version").toString()
-        name = "Silk API"
-        description = "Core API module providing key hooks and intercompatibility features."
+        name = rootName
+        description = rootDescription
 
         license(project.property("mod_license").toString())
         icon("assets/silk/icon.png")
@@ -68,9 +66,49 @@ silk {
     }
 }
 
+afterEvaluate {
+    publishing {
+        publications {
+            (findByName("mavenJava") as MavenPublication).pom {
+                name = silk.fabric.name
+                description = silk.fabric.description
+                url = sourcesUrl
+
+                licenses {
+                    license {
+                        name = project.property("mod_license").toString()
+                        url = "$sourcesUrl/blob/main/LICENSE"
+                    }
+                }
+
+                developers {
+                    silk.fabric.authors.get().forEach { authorPerson ->
+                        developer {
+                            this.name = authorPerson.name
+                        }
+                    }
+                }
+
+                scm {
+                    connection.set("scm:git:${sourcesUrl}.git")
+                    val repoPath = sourcesUrl.substringAfter("https://github.com/")
+                    developerConnection.set("scm:git:git@github.com:${repoPath}.git")
+                    this.url.set(sourcesUrl)
+                }
+
+                issueManagement {
+                    system = "GitHub"
+                    url = "$sourcesUrl/issues"
+                }
+            }
+        }
+    }
+}
+
 allprojects {
     apply(plugin = "java")
-    apply(plugin = "de.rhm176.silk")
+    apply(plugin = "de.rhm176.silk.silk-plugin")
+    apply(plugin = "maven-publish")
 
     group = rootProject.property("maven_group")!!
 
@@ -78,59 +116,88 @@ allprojects {
         archivesName.set(project.name)
     }
 
-    repositories {
-        mavenLocal()
+    sourceSets {
+        main {
+            resources {
+                srcDir(rootProject.file("src/common/resources"))
+            }
+        }
+    }
+
+    silk {
+        silkLoaderCoordinates = "de.rhm176.silk:silk-loader:${rootProject.property("loaderVersion")}"
     }
 
     dependencies {
         equilinox(silk.findEquilinoxGameJar())
 
-        implementation("de.rhm176.silk:silk-loader:${rootProject.property("loaderVersion")}")
-        //TODO: bundle
-        implementation("com.google.code.gson:gson:${rootProject.property("gsonVersion")}")
         //TODO: bundle
         implementation("de.javagl:obj:${rootProject.property("objVersion")}")
+        //TODO: bundle
+        implementation("com.google.code.gson:gson:${rootProject.property("gsonVersion")}")
 
         compileOnly("org.jetbrains:annotations:${rootProject.property("annotationsVersion")}")
     }
 
     java {
-        val javaLanguageVersion = JavaLanguageVersion.of(rootProject.findProperty("javaVersion").toString())
-        val javaVersion = JavaVersion.toVersion(javaLanguageVersion.asInt())
-
-        toolchain {
-            languageVersion = javaLanguageVersion
-        }
+        val javaVersion = JavaVersion.toVersion(rootProject.findProperty("javaVersion").toString())
 
         sourceCompatibility = javaVersion
         targetCompatibility = javaVersion
+
+        withSourcesJar()
     }
 
     tasks.jar {
         inputs.property("archivesName", project.base.archivesName)
 
         from(rootProject.file("LICENSE")) {
-            rename { "${it}_${inputs.properties["archivesName"]}" }
+            rename { "${it}_${project.base.archivesName.get()}" }
+        }
+    }
+
+    publishing {
+        publications {
+            create<MavenPublication>("mavenJava") {
+                from(components["java"])
+            }
+        }
+
+        repositories {
+            val reposiliteBaseUrl = System.getenv("REPOSILITE_URL")
+                ?: project.findProperty("reposiliteUrl") as String?
+
+            if (!reposiliteBaseUrl.isNullOrBlank()) {
+                maven {
+                    name = "Reposilite"
+
+                    val repoPath = if (project.version.toString().endsWith("-SNAPSHOT")) {
+                        "/snapshots"
+                    } else {
+                        "/releases"
+                    }
+                    url = uri("$reposiliteBaseUrl$repoPath")
+
+                    credentials(PasswordCredentials::class.java) {
+                        username = System.getenv("REPOSILITE_USERNAME") ?: project.findProperty("reposiliteUsername") as String?
+                        password = System.getenv("REPOSILITE_PASSWORD") ?: project.findProperty("reposilitePassword") as String?
+                    }
+
+                    authentication {
+                        create<BasicAuthentication>("basic")
+                    }
+                }
+            }
         }
     }
 }
 
 subprojects {
-    apply(plugin = "de.rhm176.silk")
-
-    sourceSets {
-        main {
-            resources {
-                srcDir(rootProject.file("src/main/resources"))
-            }
-        }
-    }
-
     val modId = project.name;
-    val modVersion = submods[modId]?.get("version")?.toString()
-    val modName = submods[modId]?.get("name")?.toString()
-    val modDescription = submods[modId]?.get("description")?.toString()
-    val modEntrypoint = submods[modId]?.get("entrypoint")?.toString()
+    val modVersion = submods[modId]?.get("version")
+    val modName = submods[modId]?.get("name")
+    val modDescription = submods[modId]?.get("description")
+    val modEntrypoint = submods[modId]?.get("entrypoint")
 
     requireNotNull(modVersion) {
         "Could not find version for $modId."

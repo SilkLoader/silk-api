@@ -7,12 +7,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import utils.FileUtils;
 
 import java.io.File;
-import java.io.InputStream;
 
 @Mixin(FileUtils.class)
 public class FileUtilsMixin {
-    // I may want to use a more incompatible annotation on purpose to signal that
-    // mods mixin'ing into this will effectively do nothing (unless they also use ModifyReturnValue)
     /**
      * @reason No reason for the game to determine its own root folder using some weird way when fabric
      * provides a method for it.
