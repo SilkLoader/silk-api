@@ -1,3 +1,18 @@
+/*
+ * Copyright 2025 Silk Loader
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.rhm176.api.blueprints;
 
 import audio.Sound;
@@ -27,6 +42,10 @@ import healer.HealerCompBlueprint;
 import health.LifeCompBlueprint;
 import hiveComponents.HiveCompBlueprint;
 import hunting.HuntCompBlueprint;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import loot.DropCompBlueprint;
 import meerkats.TimeOutCompBlueprint;
 import org.lwjgl.util.vector.Vector4f;
@@ -38,18 +57,14 @@ import sound.SoundCompBlueprint;
 import stinging.StingingCompBlueprint;
 import treeCharging.TreeChargeCompBlueprint;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
 public class SilkComponents {
     public static TongueShootCompBlueprint createTongueShoot() {
-        //return new TongueShootCompBlueprint();
+        // return new TongueShootCompBlueprint();
         return null;
     }
 
-    public static RandomSounderBlueprint createRandomSounder(float waitTime, float randomExtra, List<SoundEffect> sounds, int stageReq) {
+    public static RandomSounderBlueprint createRandomSounder(
+            float waitTime, float randomExtra, List<SoundEffect> sounds, int stageReq) {
         return RandomSounderBlueprintAccessor.create(waitTime, randomExtra, sounds, stageReq);
     }
 
@@ -57,14 +72,18 @@ public class SilkComponents {
         return FoodCompBlueprintAccessor.create(sections, effect);
     }
 
-    public static HuntCompBlueprint createHunt(int huntingRange, boolean huntsYoung, boolean huntsOld, Classification... prey) {
+    public static HuntCompBlueprint createHunt(
+            int huntingRange, boolean huntsYoung, boolean huntsOld, Classification... prey) {
         return HuntCompBlueprintAccessor.create(huntingRange, prey, huntsYoung, huntsOld);
     }
 
-    public static GrowthCompBlueprint.StaticGrowthCompBlueprint createStaticGrowth(float growthTime, int modelStages, int subStages) {
+    public static GrowthCompBlueprint.StaticGrowthCompBlueprint createStaticGrowth(
+            float growthTime, int modelStages, int subStages) {
         return StaticGrowthCompBlueprintAccessor.create(growthTime, modelStages, subStages);
     }
-    public static GrowthCompBlueprint.DynamicGrowthCompBlueprint createDynamicGrowth(float growthTime, int modelStages) {
+
+    public static GrowthCompBlueprint.DynamicGrowthCompBlueprint createDynamicGrowth(
+            float growthTime, int modelStages) {
         return DynamicGrowthCompBlueprintAccessor.create(growthTime, modelStages);
     }
 
@@ -111,6 +130,7 @@ public class SilkComponents {
     public static FishHuntCompBlueprint createHuntFish() {
         return FishHuntCompBlueprintAccessor.create();
     }
+
     public static BirdHuntCompBlueprint createHuntBird() {
         return BirdHuntCompBlueprintAccessor.create();
     }
@@ -118,7 +138,9 @@ public class SilkComponents {
     public static FightCompBlueprint createFight(int damage, boolean takesRevenge, float biteRange, float pause) {
         return createFight(damage, takesRevenge, biteRange, pause, 0);
     }
-    public static FightCompBlueprint createFight(int damage, boolean takesRevenge, float biteRange, float pause, int animationId) {
+
+    public static FightCompBlueprint createFight(
+            int damage, boolean takesRevenge, float biteRange, float pause, int animationId) {
         return FightCompBlueprintAccessor.create(damage, takesRevenge, animationId, biteRange, pause);
     }
 
@@ -130,21 +152,58 @@ public class SilkComponents {
         return HealerCompBlueprintAccessor.create(death);
     }
 
-    public static LifeCompBlueprint createLife(float averagePopulation, float averageLifeLength, int defencePoints, float[] popFactors, DeathAiBlueprint deathAi, BreedingCompBlueprint breedBlueprint, EnviroCompBlueprint enviroBlueprint, boolean isAnimal) {
-        return LifeCompBlueprintAccessor.create(averagePopulation, averageLifeLength, defencePoints, popFactors, deathAi, breedBlueprint, enviroBlueprint, isAnimal);
+    public static LifeCompBlueprint createLife(
+            float averagePopulation,
+            float averageLifeLength,
+            int defencePoints,
+            float[] popFactors,
+            DeathAiBlueprint deathAi,
+            BreedingCompBlueprint breedBlueprint,
+            EnviroCompBlueprint enviroBlueprint,
+            boolean isAnimal) {
+        return LifeCompBlueprintAccessor.create(
+                averagePopulation,
+                averageLifeLength,
+                defencePoints,
+                popFactors,
+                deathAi,
+                breedBlueprint,
+                enviroBlueprint,
+                isAnimal);
     }
 
-    public static BreedingCompBlueprint createBreeding(int breedingCount, List<Requirement> requirements, float breedMaturity, float breedTimeAverage, boolean secret) {
+    public static BreedingCompBlueprint createBreeding(
+            int breedingCount,
+            List<Requirement> requirements,
+            float breedMaturity,
+            float breedTimeAverage,
+            boolean secret) {
         return createBreeding(-1, breedingCount, requirements, breedMaturity, breedTimeAverage, secret);
     }
-    public static BreedingCompBlueprint createBreeding(int breedingCount, List<Requirement> requirements, float breedMaturity, float breedTimeAverage) {
+
+    public static BreedingCompBlueprint createBreeding(
+            int breedingCount, List<Requirement> requirements, float breedMaturity, float breedTimeAverage) {
         return createBreeding(-1, breedingCount, requirements, breedMaturity, breedTimeAverage, false);
     }
-    public static BreedingCompBlueprint createBreeding(int parentId, int breedingCount, List<Requirement> requirements, float breedMaturity, float breedTimeAverage) {
+
+    public static BreedingCompBlueprint createBreeding(
+            int parentId,
+            int breedingCount,
+            List<Requirement> requirements,
+            float breedMaturity,
+            float breedTimeAverage) {
         return createBreeding(parentId, breedingCount, requirements, breedMaturity, breedTimeAverage, false);
     }
-    public static BreedingCompBlueprint createBreeding(int parentId, int breedingCount, List<Requirement> requirements, float breedMaturity, float breedTimeAverage, boolean secret) {
-        return BreedingCompBlueprintAccessor.create(parentId, breedingCount, requirements, breedMaturity, breedTimeAverage, secret);
+
+    public static BreedingCompBlueprint createBreeding(
+            int parentId,
+            int breedingCount,
+            List<Requirement> requirements,
+            float breedMaturity,
+            float breedTimeAverage,
+            boolean secret) {
+        return BreedingCompBlueprintAccessor.create(
+                parentId, breedingCount, requirements, breedMaturity, breedTimeAverage, secret);
     }
 
     public static EnviroCompBlueprint createEnvironment(EnviroFactorBlueprint... blueprints) {
@@ -152,7 +211,14 @@ public class SilkComponents {
         return new EnviroCompBlueprint(new ArrayList<>(Arrays.asList(blueprints)));
     }
 
-    public static InformationComponent.InformationCompBlueprint createInfo(String name, String description, boolean flipTexture, int dpCost, int baseDpPerMin, int roamingRange, Sound placementSound) {
+    public static InformationComponent.InformationCompBlueprint createInfo(
+            String name,
+            String description,
+            boolean flipTexture,
+            int dpCost,
+            int baseDpPerMin,
+            int roamingRange,
+            Sound placementSound) {
         InformationComponent.InformationCompBlueprint blueprint = new InformationComponent.InformationCompBlueprint();
         InformationCompBlueprintAccessor accessor = (InformationCompBlueprintAccessor) blueprint;
         accessor.setName(name);
@@ -169,7 +235,7 @@ public class SilkComponents {
     @SuppressWarnings("DataFlowIssue")
     public static UpDownDeathBlueprint createUpDownDeath(float speed, ParticleSystem particles) {
         UpDownDeathBlueprint blueprint = new UpDownDeathBlueprint();
-        UpDownDeathBlueprintAccessor accessor = ((UpDownDeathBlueprintAccessor)blueprint);
+        UpDownDeathBlueprintAccessor accessor = ((UpDownDeathBlueprintAccessor) blueprint);
         accessor.setSpeed(speed);
         accessor.setParticles(particles);
 
@@ -178,14 +244,14 @@ public class SilkComponents {
 
     public static ParticleDeathBlueprint createParticleDeath(ParticleSystem particles) {
         ParticleDeathBlueprint blueprint = new ParticleDeathBlueprint();
-        ((ParticleDeathBlueprintAccessor)blueprint).setSystem(particles);
+        ((ParticleDeathBlueprintAccessor) blueprint).setSystem(particles);
 
         return blueprint;
     }
 
     public static FallDeathBlueprint createFallDeath(float fallTime, float totalTime, float fallAngle) {
         FallDeathBlueprint blueprint = new FallDeathBlueprint();
-        FallDeathBlueprintAccessor accessor = ((FallDeathBlueprintAccessor)blueprint);
+        FallDeathBlueprintAccessor accessor = ((FallDeathBlueprintAccessor) blueprint);
         accessor.setFallTime(fallTime);
         accessor.setTotalTime(totalTime);
         accessor.setFallenAngle(fallAngle);
@@ -193,9 +259,16 @@ public class SilkComponents {
         return blueprint;
     }
 
-    public static FallDeathBlueprint createFallDeath(float fallTime, float totalTime, float fallAngle, float explodeTime, boolean useEntityColor, ParticleSystem system, Set<Integer> modelStages) {
+    public static FallDeathBlueprint createFallDeath(
+            float fallTime,
+            float totalTime,
+            float fallAngle,
+            float explodeTime,
+            boolean useEntityColor,
+            ParticleSystem system,
+            Set<Integer> modelStages) {
         FallDeathBlueprint blueprint = createFallDeath(fallTime, totalTime, fallAngle);
-        FallDeathBlueprintAccessor accessor = ((FallDeathBlueprintAccessor)blueprint);
+        FallDeathBlueprintAccessor accessor = ((FallDeathBlueprintAccessor) blueprint);
         accessor.setHasParticleEffect(true);
         accessor.setExplodeTime(explodeTime);
         accessor.setUseEntityColour(useEntityColor);
@@ -207,21 +280,22 @@ public class SilkComponents {
 
     public static FloaterDeathBlueprint createFloaterDeath(float deadRot) {
         FloaterDeathBlueprint blueprint = new FloaterDeathBlueprint();
-        ((FloaterDeathBlueprintAccessor)blueprint).setDeadRot(deadRot);
+        ((FloaterDeathBlueprintAccessor) blueprint).setDeadRot(deadRot);
 
         return blueprint;
     }
 
     public static FadeDeathBlueprint createFadeDeath(float fadeTime) {
         FadeDeathBlueprint blueprint = new FadeDeathBlueprint();
-        ((FadeDeathBlueprintAccessor)blueprint).setFadeTime(fadeTime);
+        ((FadeDeathBlueprintAccessor) blueprint).setFadeTime(fadeTime);
 
         return blueprint;
     }
 
-    public static SpawnDeathBlueprint createSpawnDeath(int entityId, int minCount, int maxCount, boolean onlyFullyGrown) {
+    public static SpawnDeathBlueprint createSpawnDeath(
+            int entityId, int minCount, int maxCount, boolean onlyFullyGrown) {
         SpawnDeathBlueprint blueprint = new SpawnDeathBlueprint();
-        SpawnDeathBlueprintAccessor accessor = ((SpawnDeathBlueprintAccessor)blueprint);
+        SpawnDeathBlueprintAccessor accessor = ((SpawnDeathBlueprintAccessor) blueprint);
         accessor.setEntityId(entityId);
         accessor.setMinCount(minCount);
         accessor.setMaxCount(maxCount);

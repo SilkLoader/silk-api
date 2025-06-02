@@ -1,5 +1,6 @@
 plugins {
     id("de.rhm176.silk.silk-plugin") version "2.0.0"
+    id("com.diffplug.spotless") version "7.0.3"
     id("maven-publish")
 }
 
@@ -109,6 +110,18 @@ allprojects {
     apply(plugin = "java")
     apply(plugin = "de.rhm176.silk.silk-plugin")
     apply(plugin = "maven-publish")
+    apply(plugin = "com.diffplug.spotless")
+
+    spotless {
+        java {
+            licenseHeaderFile(rootProject.file("HEADER"))
+
+            importOrder()
+            removeUnusedImports()
+
+            palantirJavaFormat("2.66.0")
+        }
+    }
 
     group = rootProject.property("maven_group")!!
 

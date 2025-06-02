@@ -1,3 +1,18 @@
+/*
+ * Copyright 2025 Silk Loader
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.rhm176.api.base;
 
 import java.util.Objects;
@@ -28,14 +43,17 @@ public class Identifier implements Comparable<Identifier> {
 
     private static String validatePath(String namespace, String path) {
         if (!isPathValid(path)) {
-            throw new IllegalArgumentException("Non [a-z0-9/._-] character in path of identifier: " + namespace + ":" + path);
+            throw new IllegalArgumentException(
+                    "Non [a-z0-9/._-] character in path of identifier: " + namespace + ":" + path);
         } else {
             return path;
         }
     }
+
     private static String validateNamespace(String namespace, String path) {
         if (!isNamespaceValid(namespace)) {
-            throw new IllegalArgumentException("Non [a-z0-9_.-] character in namespace of identifier: " + namespace + ":" + path);
+            throw new IllegalArgumentException(
+                    "Non [a-z0-9_.-] character in namespace of identifier: " + namespace + ":" + path);
         }
         return namespace;
     }
@@ -49,8 +67,13 @@ public class Identifier implements Comparable<Identifier> {
 
         return true;
     }
+
     private static boolean isNamespaceCharacterValid(char character) {
-        return character == '_' || character == '-' || character >= 'a' && character <= 'z' || character >= '0' && character <= '9' || character == '.';
+        return character == '_'
+                || character == '-'
+                || character >= 'a' && character <= 'z'
+                || character >= '0' && character <= '9'
+                || character == '.';
     }
 
     public static boolean isPathValid(String path) {
@@ -62,6 +85,7 @@ public class Identifier implements Comparable<Identifier> {
 
         return true;
     }
+
     public static boolean isPathCharacterValid(char character) {
         return character == '_'
                 || character == '-'
@@ -95,7 +119,9 @@ public class Identifier implements Comparable<Identifier> {
         if (this == o) {
             return true;
         } else {
-            return o instanceof Identifier identifier && this.namespace.equals(identifier.namespace) && this.path.equals(identifier.path);
+            return o instanceof Identifier identifier
+                    && this.namespace.equals(identifier.namespace)
+                    && this.path.equals(identifier.path);
         }
     }
 }

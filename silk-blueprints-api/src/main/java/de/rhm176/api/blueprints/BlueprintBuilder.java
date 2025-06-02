@@ -1,3 +1,18 @@
+/*
+ * Copyright 2025 Silk Loader
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.rhm176.api.blueprints;
 
 import blueprints.Blueprint;
@@ -7,7 +22,6 @@ import componentArchitecture.ComponentBlueprint;
 import de.rhm176.api.base.Identifier;
 import de.rhm176.api.base.util.ObjLoader;
 import de.rhm176.api.blueprints.mixin.BlueprintAccessor;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -70,6 +84,7 @@ public class BlueprintBuilder {
     public BlueprintBuilder waterRequirement(boolean canBeUnderwater, boolean canBeOverwater) {
         return waterRequirement(canBeUnderwater, canBeOverwater, 0);
     }
+
     public BlueprintBuilder waterRequirement(boolean canBeUnderwater, boolean canBeOverwater, float offset) {
         this.canBeUnderwater = canBeUnderwater;
         this.canBeOverwater = canBeOverwater;
@@ -85,15 +100,17 @@ public class BlueprintBuilder {
         Blueprint blueprint = BlueprintAccessor.create(0);
         blueprint.setRandomizeModelStages(randomizeModel);
         blueprint.alwaysVisible = isAlwaysVisible;
-        ((BlueprintAccessor)blueprint).callSetClassification(Classifier.getClassification(classification));
-        ((BlueprintAccessor)blueprint).callSetWaterRequirements(canBeUnderwater,canBeOverwater,waterOffset);
+        ((BlueprintAccessor) blueprint).callSetClassification(Classifier.getClassification(classification));
+        ((BlueprintAccessor) blueprint).callSetWaterRequirements(canBeUnderwater, canBeOverwater, waterOffset);
 
         List<SubBlueprint> subBlueprints = new ArrayList<>();
         List<Identifier> modelPaths = models.isEmpty() ? List.of(id) : models;
 
         for (Identifier modelPath : modelPaths) {
-            Optional<Path> objFile = BlueprintsMain.CONTAINER.findPath("assets/" + modelPath.getNamespace() + "/models/" + modelPath.getPath() + ".obj");
-            Optional<Path> mtlFile = BlueprintsMain.CONTAINER.findPath("assets/" + modelPath.getNamespace() + "/models/" + modelPath.getPath() + ".mtl");
+            Optional<Path> objFile = BlueprintsMain.CONTAINER.findPath(
+                    "assets/" + modelPath.getNamespace() + "/models/" + modelPath.getPath() + ".obj");
+            Optional<Path> mtlFile = BlueprintsMain.CONTAINER.findPath(
+                    "assets/" + modelPath.getNamespace() + "/models/" + modelPath.getPath() + ".mtl");
 
             if (objFile.isEmpty()) {
                 throw new RuntimeException(new FileNotFoundException("Blueprint \"" + id + "\" has no \".obj\" file."));
@@ -109,8 +126,7 @@ public class BlueprintBuilder {
                         Files.newInputStream(mtlFile.get()),
                         mtlFile.get().getFileName().toString(),
                         1,
-                        1
-                ));
+                        1));
             } catch (IOException e) {
                 throw new RuntimeException("Could not load model for blueprint \"" + id + "\".", e);
             }
@@ -123,8 +139,8 @@ public class BlueprintBuilder {
 
         components.forEach(blueprint::addComponent);
 
-        ((BlueprintAccessor)blueprint).callSetSubBlueprints(subBlueprints);
-        ((BlueprintAccessor)blueprint).callIndicateLoaded();
+        ((BlueprintAccessor) blueprint).callSetSubBlueprints(subBlueprints);
+        ((BlueprintAccessor) blueprint).callIndicateLoaded();
 
         return blueprint;
     }

@@ -1,28 +1,40 @@
+/*
+ * Copyright 2025 Silk Loader
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.rhm176.api.base.util;
 
+import blueprints.SubBlueprint;
 import de.javagl.obj.FloatTuple;
 import de.javagl.obj.Obj;
 import de.javagl.obj.ObjFace;
 import de.javagl.obj.ObjGroup;
 import de.javagl.obj.ObjReader;
 import de.javagl.obj.ObjUtils;
-import org.lwjgl.util.vector.Vector3f;
-import picking.AABB;
-import blueprints.SubBlueprint;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
+import org.lwjgl.util.vector.Vector3f;
+import picking.AABB;
 
 public final class ObjLoader {
     private static final Vector3f DEFAULT_COLOR = new Vector3f(0.8f, 0.8f, 0.8f);
     private static final float DEFAULT_WOBBLE_FACTOR = 0.0f;
 
-    public record SectionData(int vertexCount, Vector3f colour, float wobbleFactor, String materialName) {
-
-    }
+    public record SectionData(int vertexCount, Vector3f colour, float wobbleFactor, String materialName) {}
 
     private static class IntermediateModelData {
         public Vector3f mins;
@@ -52,7 +64,7 @@ public final class ObjLoader {
 
         public void finalizeAABB() {
             if (this.mins.x > this.maxs.x) {
-                this.aabb = new AABB(new Vector3f(0,0,0), new Vector3f(0,0,0));
+                this.aabb = new AABB(new Vector3f(0, 0, 0), new Vector3f(0, 0, 0));
             } else {
                 this.aabb = new AABB(this.mins, this.maxs);
             }
@@ -71,10 +83,12 @@ public final class ObjLoader {
         }
     }
 
-    public static Map<String, MaterialInfo> parseMtlFile(InputStream mtlInputStream, String mtlNameForLogging) throws IOException {
+    public static Map<String, MaterialInfo> parseMtlFile(InputStream mtlInputStream, String mtlNameForLogging)
+            throws IOException {
         Map<String, MaterialInfo> materialInfos = new HashMap<>();
         if (mtlInputStream == null) {
-            System.err.println("MTL InputStream is null for " + mtlNameForLogging + ". Using default material properties.");
+            System.err.println(
+                    "MTL InputStream is null for " + mtlNameForLogging + ". Using default material properties.");
             return materialInfos;
         }
 
@@ -101,7 +115,8 @@ public final class ObjLoader {
                             currentMaterial = new MaterialInfo(parts[1]);
                             materialInfos.put(parts[1], currentMaterial);
                         } else {
-                            System.err.println("Warning: Malformed newmtl line in " + mtlNameForLogging + ": '" + line + "'");
+                            System.err.println(
+                                    "Warning: Malformed newmtl line in " + mtlNameForLogging + ": '" + line + "'");
                         }
                         break;
                     case "kd":
@@ -112,7 +127,8 @@ public final class ObjLoader {
                                 float b = Float.parseFloat(parts[3]);
                                 currentMaterial.diffuseColor.set(r, g, b);
                             } catch (NumberFormatException e) {
-                                System.err.println("Warning: Could not parse Kd (diffuse color) in " + mtlNameForLogging + " for material " + currentMaterial.name + ": '" + line + "'");
+                                System.err.println("Warning: Could not parse Kd (diffuse color) in " + mtlNameForLogging
+                                        + " for material " + currentMaterial.name + ": '" + line + "'");
                             }
                         }
                         break;
@@ -121,7 +137,8 @@ public final class ObjLoader {
                             try {
                                 currentMaterial.wobbleFactor = Float.parseFloat(parts[1]);
                             } catch (NumberFormatException e) {
-                                System.err.println("Warning: Could not parse wobbleFactor in " + mtlNameForLogging + " for material " + currentMaterial.name + ": '" + line + "'");
+                                System.err.println("Warning: Could not parse wobbleFactor in " + mtlNameForLogging
+                                        + " for material " + currentMaterial.name + ": '" + line + "'");
                             }
                         }
                         break;
@@ -131,7 +148,14 @@ public final class ObjLoader {
         return materialInfos;
     }
 
-    public static SubBlueprint convertToSubBlueprint(InputStream objInputStream, String objName, InputStream mtlInputStream, String mtlName, float size, float defaultIncreaseFactor) throws IOException {
+    public static SubBlueprint convertToSubBlueprint(
+            InputStream objInputStream,
+            String objName,
+            InputStream mtlInputStream,
+            String mtlName,
+            float size,
+            float defaultIncreaseFactor)
+            throws IOException {
         if (objInputStream == null) {
             throw new IOException("OBJ InputStream cannot be null for " + objName);
         }
@@ -147,7 +171,14 @@ public final class ObjLoader {
         for (int k = 0; k < triangulatedObj.getNumMaterialGroups(); k++) {
             ObjGroup materialGroup = triangulatedObj.getMaterialGroup(k);
             String materialGroupName = materialGroup.getName();
-            processGroup(materialGroup, materialGroupName, triangulatedObj, materialColorMap, size, intermediateData, modelDataList);
+            processGroup(
+                    materialGroup,
+                    materialGroupName,
+                    triangulatedObj,
+                    materialColorMap,
+                    size,
+                    intermediateData,
+                    modelDataList);
         }
 
         intermediateData.modelData = new float[modelDataList.size()];
@@ -160,13 +191,17 @@ public final class ObjLoader {
                 intermediateData.modelData,
                 intermediateData.aabb,
                 intermediateData.extraAabbs,
-                intermediateData.increaseFactor
-        );
+                intermediateData.increaseFactor);
     }
 
-    private static void processGroup(ObjGroup group, String groupName, Obj triangulatedObj,
-                                     Map<String, MaterialInfo> materialInfoMap, float size,
-                                     IntermediateModelData intermediateData, List<Float> modelDataList) {
+    private static void processGroup(
+            ObjGroup group,
+            String groupName,
+            Obj triangulatedObj,
+            Map<String, MaterialInfo> materialInfoMap,
+            float size,
+            IntermediateModelData intermediateData,
+            List<Float> modelDataList) {
         if (group == null || group.getNumFaces() == 0) {
             return;
         }
@@ -188,13 +223,19 @@ public final class ObjLoader {
                 int normalIndex = face.getNormalIndex(j);
 
                 if (vertexIndex < 0 || vertexIndex >= triangulatedObj.getNumVertices()) {
-                    System.err.println("Warning: Invalid vertex index ("+vertexIndex+") in face from group '" + groupName + "'. Max vertices: " + triangulatedObj.getNumVertices() + ". Skipping vertex.");
+                    System.err.println(
+                            "Warning: Invalid vertex index (" + vertexIndex + ") in face from group '" + groupName
+                                    + "'. Max vertices: " + triangulatedObj.getNumVertices() + ". Skipping vertex.");
                     continue;
                 }
 
                 Vector3f normal;
-                if (!face.containsNormalIndices() || normalIndex < 0 || normalIndex >= triangulatedObj.getNumNormals()) {
-                    System.err.println("Warning: Face does not contain normal indices or normal index ("+normalIndex+") is invalid in group '" + groupName + "'. Max normals: " + triangulatedObj.getNumNormals() + ". Using default normal (0,1,0).");
+                if (!face.containsNormalIndices()
+                        || normalIndex < 0
+                        || normalIndex >= triangulatedObj.getNumNormals()) {
+                    System.err.println("Warning: Face does not contain normal indices or normal index (" + normalIndex
+                            + ") is invalid in group '" + groupName + "'. Max normals: "
+                            + triangulatedObj.getNumNormals() + ". Using default normal (0,1,0).");
                     normal = new Vector3f(0, 1, 0);
                 } else {
                     FloatTuple normalTuple = triangulatedObj.getNormal(normalIndex);
@@ -225,7 +266,11 @@ public final class ObjLoader {
         }
 
         if (sectionVertexCount > 0) {
-            intermediateData.sections.add(new SectionData(sectionVertexCount, new Vector3f(matInfo.diffuseColor.x, matInfo.diffuseColor.y, matInfo.diffuseColor.z), matInfo.wobbleFactor, groupName));
+            intermediateData.sections.add(new SectionData(
+                    sectionVertexCount,
+                    new Vector3f(matInfo.diffuseColor.x, matInfo.diffuseColor.y, matInfo.diffuseColor.z),
+                    matInfo.wobbleFactor,
+                    groupName));
             modelDataList.addAll(sectionModelDataFloats);
         }
     }

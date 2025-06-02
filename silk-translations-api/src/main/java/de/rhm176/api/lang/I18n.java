@@ -1,3 +1,18 @@
+/*
+ * Copyright 2025 Silk Loader
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.rhm176.api.lang;
 
 import org.jetbrains.annotations.Contract;
@@ -12,9 +27,7 @@ import org.jetbrains.annotations.NotNull;
  * translations currently.
  */
 public final class I18n {
-    private I18n() {
-
-    }
+    private I18n() {}
 
     /**
      * Translates the given key using the currently loaded language data.
@@ -28,7 +41,7 @@ public final class I18n {
     @NotNull
     @Contract(pure = true)
     public static String translate(@NonNls @NotNull String key) {
-        return translate(key, new Object[]{});
+        return translate(key, new Object[] {});
     }
     /**
      * Translates the given key using the currently loaded language data and formats the
@@ -62,7 +75,7 @@ public final class I18n {
     @NotNull
     @Contract(pure = true)
     public static String translateWithFallback(@NonNls @NotNull String key, @NotNull String fallback) {
-        return translateWithFallback(key, fallback, new Object[]{});
+        return translateWithFallback(key, fallback, new Object[] {});
     }
     /**
      * Translates the given key using the currently loaded language data and formats the
