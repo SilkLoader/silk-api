@@ -106,6 +106,8 @@ afterEvaluate {
     }
 }
 
+println(System.getenv("REPOSILITE_USERNAME") ?: project.findProperty("reposiliteUsername") as String?)
+
 allprojects {
     apply(plugin = "java")
     apply(plugin = "de.rhm176.silk.silk-plugin")
