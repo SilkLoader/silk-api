@@ -188,7 +188,7 @@ allprojects {
         inputs.property("archivesName", project.base.archivesName)
 
         from(rootProject.file("LICENSE")) {
-            rename { "${it}_${project.base.archivesName.get()}" }
+            rename { "${it}_${inputs.properties["archivesName"]}" }
         }
     }
 
