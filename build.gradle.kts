@@ -141,8 +141,26 @@ allprojects {
         silkLoaderCoordinates = "de.rhm176.silk:silk-loader:${rootProject.property("loaderVersion")}"
     }
 
+    if (System.getenv("CI") == "true") {
+        repositories {
+            maven {
+                name = "RHM's private repo"
+                url = uri("https://maven.rhm176.de/private")
+
+                credentials(PasswordCredentials::class.java) {
+                    username = System.getenv("REPOSILITE_USERNAME") ?: project.findProperty("reposiliteUsername") as String?
+                    password = System.getenv("REPOSILITE_PASSWORD") ?: project.findProperty("reposilitePassword") as String?
+                }
+            }
+        }
+    }
+
     dependencies {
-        equilinox(silk.findEquilinoxGameJar())
+        if (System.getenv("CI") == "true") { // this is probably legally questionable, but at least it's a private repo only accessible using the token
+            equilinox("com.equilinox:game:${rootProject.property("equilinoxVersion")}")
+        } else {
+            equilinox(silk.findEquilinoxGameJar())
+        }
 
         //TODO: bundle
         implementation("de.javagl:obj:${rootProject.property("objVersion")}")
