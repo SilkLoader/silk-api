@@ -1,5 +1,5 @@
 plugins {
-    id("de.rhm176.silk.silk-plugin") version "2.0.1"
+    id("de.rhm176.silk.silk-plugin") version "2.0.2"
     id("com.diffplug.spotless") version "7.0.3"
     id("maven-publish")
 }
