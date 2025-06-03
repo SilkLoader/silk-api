@@ -65,6 +65,10 @@ jobs:
       - name: Build APIs
         id: build_plugin
         run: ./gradlew build --stacktrace --warning-mode fail
+        env:
+          REPOSILITE_URL: ${{ secrets.REPOSILITE_URL }}
+          REPOSILITE_USERNAME: ${{ secrets.REPOSILITE_USERNAME }}
+          REPOSILITE_PASSWORD: ${{ secrets.REPOSILITE_PASSWORD }}
 
       - name: Publish APIs
         run: ./gradlew publish --stacktrace --warning-mode fail
