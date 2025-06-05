@@ -1,7 +1,8 @@
 plugins {
-    id("de.rhm176.silk.silk-plugin") version "2.0.2"
+    id("de.rhm176.silk.silk-plugin") version "2.0.4"
     id("com.diffplug.spotless") version "7.0.3"
     id("maven-publish")
+    id("java-library")
 }
 
 version = project.property("mod_version")!!.toString()
@@ -35,6 +36,12 @@ val submods = mapOf(
         "entrypoint" to "de.rhm176.api.task.TasksMain"
     )
 )
+
+dependencies {
+    submods.keys.forEach {
+        compileOnlyApi(project(":$it"))
+    }
+}
 
 silk {
     mods {
