@@ -1,3 +1,9 @@
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import java.net.HttpURLConnection
+import java.net.URI
+import java.net.URL
+
 plugins {
     id("de.rhm176.silk.silk-plugin") version "2.0.4"
     id("com.diffplug.spotless") version "7.0.3"
@@ -40,6 +46,27 @@ val submods = mapOf(
 dependencies {
     submods.keys.forEach {
         compileOnlyApi(project(":$it"))
+    }
+}
+
+fun isArtifactPublished(group: String, artifact: String, version: String): Boolean {
+    val groupPath = group.replace('.', '/')
+    val baseUrl = System.getenv("REPOSILITE_URL")
+        ?: project.findProperty("reposiliteUrl") as String?
+        ?: return false
+
+    val artifactUrl = "$baseUrl/releases/$groupPath/$artifact/$version/$artifact-$version.pom"
+
+    val client = OkHttpClient()
+    val request = Request.Builder().url(artifactUrl).head().build()
+
+    return try {
+        client.newCall(request).execute().use { response ->
+            response.isSuccessful
+        }
+    } catch (e: Exception) {
+        logger.warn("Failed to check artifact existence: ${e.message}")
+        false
     }
 }
 
@@ -231,6 +258,12 @@ allprojects {
                     }
                 }
             }
+        }
+    }
+
+    tasks.named("publish") {
+        onlyIf {
+            !isArtifactPublished(project.group.toString(), project.name, project.version.toString())
         }
     }
 }
