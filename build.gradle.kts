@@ -261,6 +261,11 @@ allprojects {
         }
     }
 
+    tasks.named("publish").configure {
+        onlyIf {
+            !isArtifactPublished(project.group.toString(), project.name, project.version.toString())
+        }
+    }
     tasks.withType<PublishToMavenRepository>().configureEach {
         onlyIf {
             !isArtifactPublished(project.group.toString(), project.name, project.version.toString())
