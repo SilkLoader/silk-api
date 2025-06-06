@@ -55,7 +55,13 @@ fun isArtifactPublished(group: String, artifact: String, version: String): Boole
         ?: project.findProperty("reposiliteUrl") as String?
         ?: return false
 
-    val artifactUrl = "$baseUrl/$groupPath/$artifact/$version/$artifact-$version.pom"
+    val repoPath = if (version.endsWith("-SNAPSHOT")) {
+        "/snapshots"
+    } else {
+        "/releases"
+    }
+
+    val artifactUrl = "$baseUrl$repoPath/$groupPath/$artifact/$version/$artifact-$version.pom"
 
     val client = OkHttpClient()
     val request = Request.Builder().url(artifactUrl).head().build()
