@@ -55,7 +55,7 @@ fun isArtifactPublished(group: String, artifact: String, version: String): Boole
         ?: project.findProperty("reposiliteUrl") as String?
         ?: return false
 
-    val artifactUrl = "$baseUrl/releases/$groupPath/$artifact/$version/$artifact-$version.pom"
+    val artifactUrl = "$baseUrl/$groupPath/$artifact/$version/$artifact-$version.pom"
 
     val client = OkHttpClient()
     val request = Request.Builder().url(artifactUrl).head().build()
@@ -261,7 +261,7 @@ allprojects {
         }
     }
 
-    tasks.named("publish") {
+    tasks.withType<PublishToMavenRepository>().configureEach {
         onlyIf {
             !isArtifactPublished(project.group.toString(), project.name, project.version.toString())
         }
